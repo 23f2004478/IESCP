@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>List of Users</h1>
+    <hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.name}}</td>
+        <td>
+            <form action="{{url_for('delete_user', id=user.id)}}" method="post">
+                <button 
+                {% if user.is_admin %}
+                    disabled
+                {% endif %}
+                 type="submit" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

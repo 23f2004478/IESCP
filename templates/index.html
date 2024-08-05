@@ -1,0 +1,80 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1>Welcome back, {{user.name}}!</h1> 
+<hr>
+{% for category in categories %}
+<h2 class="mb-3 text-left">{{category.name}}</h2>
+<div class="products">
+  {% for product in category.products %}
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title text-center">{{product.name}}</h5>
+        <hr>
+        <h6 class="card-subtitle mb-2 text-body-secondary product-sub">
+          <div class="product-price">
+            &#8377;
+            {{product.price}} 
+          </div>
+          <div class="product quantity">
+            {{product.quantity}} items
+          </div>
+        </h6>
+        <p class="card-text text-center">{{product.description}}</p>
+        <hr>
+        <div class="optional">
+          {% if product.dom %}
+            <strong>Manufactured:</strong> {{product.dom.strftime('%b %d, %Y')}}
+          {% endif %}
+          <br>
+          {% if product.best_before %}
+            <strong>Best Before:</strong> {{product.best_before}} days
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-footer">
+        {% if product.quantity > 0 %}
+          
+        <form action="{{url_for('add_to_cart', id=product.id)}}" method="post">
+          <div class="cart-form">
+            <input class="form-control" type="number" name="quantity" id="quantity" placeholder="Quantity" value="1">
+            <button class="btn btn-outline-primary" type="submit">
+              <i class="fa fa-cart-plus" aria-hidden="true"></i>
+              Add to Cart</button>
+          </div>
+        </form>
+        {% else %}
+        Out of Stock
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+<br><br>
+{% endfor %}
+{% endblock %}
+
+{% block style %}
+  <style>
+    .products{
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .card{
+      min-width: 300px;
+    }
+    .cart-form{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cart-form button{
+      margin-top: 10px;
+      width: 100%;
+    }
+    .product-sub{
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+{% endblock %}
