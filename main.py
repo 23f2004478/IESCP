@@ -28,4 +28,4 @@ def test():
     # db.session.commit()
     test_db_get = testDB.query.get(1)
 
-    return "<p>Flask run test passed. <br><br> Username: {} <br> Password: {} <br> testDB passed.</p>".format(test_db_get.username, test_db_get.passhash)
+    return "<p>Flask run test passed. <br> Dotenv working. <br><br> Username: {} <br> Password: {} <br> testDB passed.</p>".format(test_db_get.username, test_db_get.passhash)
