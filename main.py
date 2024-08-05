@@ -1,11 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-
-from main import app
 from dotenv import load_dotenv
 import os
+
+app = Flask(__name__)
 
 load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
