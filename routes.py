@@ -250,7 +250,11 @@ def settings_post():
 # Upload Profile Picture --------------------------------------------------------------------------------
 
 # Define the directory where uploaded files will be stored
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/uploads')
+UPLOAD_FOLDER = '/home/iescp/IESCP/static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
