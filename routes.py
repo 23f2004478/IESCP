@@ -250,7 +250,7 @@ def settings_post():
 # Upload Profile Picture --------------------------------------------------------------------------------
 
 # Define the directory where uploaded files will be stored
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'IESCP/static/exports')
+UPLOAD_FOLDER = '/home/iescp/IESCP/static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -284,7 +284,7 @@ def upload_profile_picture():
     if file and allowed_file(file.filename):
         # Delete the old profile picture if it's not the default
         if current_user.profile_picture != 'default_profile_picture.jpg':
-            old_profile_picture_path = os.path.join(current_app.root_path, 'IESCP/static/uploads', current_user.profile_picture)
+            old_profile_picture_path = os.path.join(current_app.root_path, 'static/uploads', current_user.profile_picture)
             if os.path.exists(old_profile_picture_path):
                 os.remove(old_profile_picture_path)
 
@@ -311,7 +311,7 @@ def delete_profile_picture():
     current_user = User.query.filter_by(username=session['username']).first()
 
     # Define the path to the current profile picture
-    profile_picture_path = os.path.join(current_app.root_path, 'IESCP/static/uploads', current_user.profile_picture)
+    profile_picture_path = os.path.join(current_app.root_path, 'static/uploads', current_user.profile_picture)
 
     # Check if the current profile picture is not the default picture and if the file exists
     if current_user.profile_picture != 'default_profile_picture.jpg' and os.path.exists(profile_picture_path):
@@ -1300,7 +1300,7 @@ def negotiate(id):
     return redirect(url_for('view_ad_request', id=id))
 
 # Exporting Data (for ADMIN only) ------------------------------------------------------------------------------------------------
-EXPORT_FOLDER = os.path.join(os.getcwd(), 'IESCP/static/exports')
+EXPORT_FOLDER = '/home/iescp/IESCP/static/exports'
 app.config['EXPORT_FOLDER'] = EXPORT_FOLDER
 
 # Export Campaigns Data (in CSV) ------------------------------------------------------------------------------------------------------------
