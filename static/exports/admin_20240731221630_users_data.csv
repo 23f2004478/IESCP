@@ -1,0 +1,7 @@
+ID,Username,Role,Is Admin,Is Flagged,Is Deleted
+1,admin,admin,True,False,False
+2,kurkure,sponsor,False,False,True
+3,cadbury,sponsor,False,True,False
+4,water,influencer,False,False,False
+5,flame,influencer,False,False,False
+6,wind,influencer,False,False,False

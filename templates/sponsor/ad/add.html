@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Add Ad</h1>
+    <hr>
+    <form action="" method="post">
+        <label class="form-label" for="category">Campaign Name:</label>
+        <input class="form-control" type="name" name="category" id="category" 
+          value="{{campaign.name}}" disabled>
+
+        <label class="form-label" for="category">Campaign ID:</label>
+        <input class="form-control" type="number" name="category" id="category" 
+          value="{{campaign.id}}" disabled>
+
+        <label class="form-label" for="title">Ad Title:</label>
+        <input class="form-control" type="text" name="title" id="title" >
+
+        <label class="form-label" for="message">Message:</label>
+        <textarea name="message" id="message" cols="30" rows="5" maxlength="250" class="form-control"
+        ></textarea>
+
+        <label class="form-label" for="requirements">Requirements:</label>
+        <textarea name="requirements" id="requirements" cols="30" rows="5" maxlength="250" class="form-control"
+        ></textarea>
+
+        <label class="form-label" for="payment_amount">Payment Amount:</label>
+        <input class="form-control" type="number" name="payment_amount" id="payment_amount" >
+
+        {% if session['role'] == 'sponsor' %}
+        <label class="form-label" for="influencer_id">Choose Influencer:</label>
+        <select id="influencer_id" name="influencer_id" class="form-select">
+          {% for influencer in influencers %}
+          <option value="{{ influencer.id }}">{{ influencer.name }}</option>
+          {% endfor %}
+        </select>
+        {% endif %}
+
+        <button type="submit" class="btn btn-outline-success my-3">
+            Send Request
+        </button>
+    </form>
+{% endblock %}

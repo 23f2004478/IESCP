@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Edit Ad Request</h1>
+    <hr>
+    <form action="" method="post">
+
+        <label class="form-label" for="title">Ad Title:</label>
+        <input class="form-control" type="text" name="title" id="title" value="{{ad.title}}">
+
+        <label class="form-label" for="message">Message:</label>
+        <textarea name="message" id="message" cols="30" rows="5" maxlength="250" class="form-control"
+        >{{ad.message}}</textarea>
+
+        <label class="form-label" for="requirements">Requirements:</label>
+        <textarea name="requirements" id="requirements" cols="30" rows="5" maxlength="250" class="form-control"
+        >{{ad.requirements}}</textarea>
+
+        <label class="form-label" for="payment_amount">Payment Amount:</label>
+        <input class="form-control" type="number" name="payment_amount" id="payment_amount" value="{{ad.payment_amount}}">
+
+        <button type="submit" class="btn btn-success mt-3">
+            <i class="fa fa-edit" aria-hidden="true"></i>
+            Done
+        </button>
+    </form>
+
+{% endblock %}

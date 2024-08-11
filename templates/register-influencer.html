@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <h1>Register Influencer</h1>
+    <form action="/register-influencer" method="POST">
+
+        <label for="category" class="form-label my-3">Industry:</label>
+        <select name="category" class="form-select" id="category" onchange="loadNiches()">
+            <option value="" disabled selected>Select a category</option>
+            {% for category in categories_dict %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="niche" class="form-label my-3">Niche:</label>
+        <select name="niche" class="form-select" id="niche">
+            <option value="" disabled selected>Select a niche</option>
+        </select>
+
+        <label for="name" class="form-label my-3">Name:</label>
+        <input type="text" name="name" class="form-control">
+        
+        <label for="username" class="form-label my-3">Username:</label>
+        <input type="text" name="username" class="form-control">
+        
+        <label for="password" class="form-label my-3">Password:</label>
+        <input type="password" name="password" class="form-control">
+
+        <label for="confirm" class="form-label my-3">Confirm Password:</label>
+        <input type="password" name="confirm" class="form-control mb-3">
+
+        <button class="btn btn-success mt-3 my-3">Register</button>
+        <a href="/login" class="btn btn-danger mx-3 my-3">Cancel</a>
+    </form>
+</div>
+
+<script>
+    function loadNiches() {
+        var categorySelect = document.getElementById("category");
+        var nicheSelect = document.getElementById("niche");
+        
+        // Get the selected category value
+        var selectedCategory = categorySelect.value;
+        
+        // Clear existing options in the niche select dropdown
+        nicheSelect.innerHTML = ''; // Clear existing options
+        
+        // Add default option for niche
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Select a niche";
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        nicheSelect.add(defaultOption);
+        
+        // Define niches based on the selected category
+        var categoriesDict = JSON.parse('{{ categories_dict | tojson | safe}}');
+        
+        if (selectedCategory in categoriesDict) {
+            var nichesArray = categoriesDict[selectedCategory];
+            nichesArray.forEach(function(niche) {
+                var option = document.createElement("option");
+                option.value = niche;
+                option.text = niche;
+                nicheSelect.add(option);
+            });
+        }
+    }
+</script>
+
+{% endblock %}

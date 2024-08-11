@@ -1,0 +1,228 @@
+{% extends 'base.html' %} {% block content%}
+
+    <div class="row mt-4">
+        <div class="col-md-3 profile-section text-center">
+            <div class="profile-pic mb-3">
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" class="img-fluid profile-picture" alt="Profile Picture">
+            </div>
+            <h3>{{ influencer.name }}</h3>
+            <h4>{{ influencer.category }}</h4>
+            <h5>{{ influencer.niche }}</h5>
+            <h5 class="mb-3">Reach: {{ influencer.reach }} followers</h5>
+            <div class="social-links">
+                <a href="{{ social_links['YouTube'] if social_links['YouTube'] else '#' }}" class="social-icon youtube" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="{{ social_links['Twitter'] if social_links['Twitter'] else '#' }}" class="social-icon twitter" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="{{ social_links['Facebook'] if social_links['Facebook'] else '#' }}" class="social-icon facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="{{ social_links['Instagram'] if social_links['Instagram'] else '#' }}" class="social-icon instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="{{ social_links['Twitch'] if social_links['Twitch'] else '#' }}" class="social-icon twitch" target="_blank"><i class="fab fa-twitch"></i></a>
+            </div>
+            {% if user.username != current_user.username %}
+                <a href="{{ url_for('chat', username=user.username) }}" class="btn btn-primary my-3">Send Message {{username}}</a>
+            {% endif %}
+
+            {% if influencer.ratings %}
+            <br>
+            <label for="rating" class="form-label mt-3">
+                <span id="ratingStars" data-rating-value="{{ influencer.rating }}"></span><span> {{ influencer.rating | round(2) }} ({{ influencer.rating_count }})</span>
+            </label>
+                <!-- Rating Distribution Section -->
+                <div class="rating-distribution mt-2">
+                    {% set total_ratings = total_ratings if total_ratings > 0 else 1 %}
+                    <div class="rating-bar">
+                        <span>5 &#9733;</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ (rating_dict[5] / total_ratings) * 100 }}%" aria-valuenow="{{ (rating_dict[5] / total_ratings) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span>{{ rating_dict[5] }}</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span>4 &#9733;</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (rating_dict[4] / total_ratings) * 100 }}%" aria-valuenow="{{ (rating_dict[4] / total_ratings) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span>{{ rating_dict[4] }}</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span>3 &#9733;</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ (rating_dict[3] / total_ratings) * 100 }}%" aria-valuenow="{{ (rating_dict[3] / total_ratings) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span>{{ rating_dict[3] }}</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span>2 &#9733;</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (rating_dict[2] / total_ratings) * 100 }}%" aria-valuenow="{{ (rating_dict[2] / total_ratings) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span>{{ rating_dict[2] }}</span>
+                    </div>
+                    <div class="rating-bar">
+                        <span>1 &#9733;</span>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (rating_dict[1] / total_ratings) * 100 }}%" aria-valuenow="{{ (rating_dict[1] / total_ratings) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <span>{{ rating_dict[1] }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-light text-center p-2">No ratings available.</div>
+            {% endif %}
+            
+        </div>
+
+        <div class="col-md-9">
+            <div class="campaign-section">
+
+                <h5>Active Campaigns:</h5>
+                {% if campaigns %}
+                    {% for campaign in campaigns %}
+                    <div class="campaign-card">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ campaign.name }} | Progress {{ ((campaign.budget - campaign.remaining_budget) / campaign.budget * 100) | round(2) }}%</span>
+                            <a href="{{ url_for('ads', id=campaign.id) }}" class="btn btn-warning btn-sm mb-3">View</a>
+                        </div>
+                        <div class="progress campaign-progress">
+                            <div class="progress-bar" style="width: {{ (campaign.budget - campaign.remaining_budget)/(campaign.budget/100) }}%; "></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-light text-center p-2">No active campaigns.</div>
+                {% endif %}
+                
+            </div>
+            
+        <!-- Reviews Section -->
+        <div class="reviews-section mt-4">
+            <h5>Reviews:</h5>
+            {% if influencer.ratings %}
+                {% for rating in influencer.ratings %}
+                <div class="review-card">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div>
+                            <a href="{{ url_for('profile', username=rating.sponsor.user.username) }}" target="_blank" style="text-decoration: none;">
+                                <span class="review-author"> {{ rating.sponsor.name }} </span>
+                            </a>                          
+                            <span class="review-date"> - {{ rating.date_created.strftime('%B %Y') }}</span>
+                        </div>
+                        <div class="rating">
+                            Rating: {{ rating.rating }}
+                        </div>
+                    </div>
+                    <p class="review-text">
+                        "{{ rating.review }}"
+                    </p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="bg-light text-center p-2">No reviews available.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block style %}
+
+<style>
+/* CSS for Reviews Section */
+.reviews-section {
+    margin-top: 20px;
+}
+
+.review-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.review-card .review-author {
+    font-weight: bold;
+}
+
+.review-card .review-date {
+    color: #777;
+    margin-left: 10px;
+}
+
+.review-card .rating {
+    font-size: 14px;
+    color: #ffc107; /* yellow color for rating */
+    font-weight: bold;
+}
+
+.review-card .review-text {
+    margin-top: 10px;
+}
+</style>
+<style>
+    .rating-distribution {
+        text-align: left;
+    }
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .rating-bar span:first-child {
+        width: 2rem;
+        text-align: center;
+    }
+    .progress {
+        flex-grow: 1;
+        margin: 0 0.5rem;
+    }
+    .progress-bar {
+        transition: width 0.4s ease;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+
+
+<script>
+    function displayStars(ratingValue) {
+        // Get the container where you want to display the stars
+        const ratingStars = document.getElementById("ratingStars");
+        
+        // Clear any existing content
+        ratingStars.innerHTML = '';
+        
+        // Define the total number of stars to display
+        const totalStars = 5; // Adjust this if you want a different total number of stars
+        
+        // Loop through and create stars
+        for (let i = 0; i < totalStars; i++) {
+            const star = document.createElement('span');
+            star.textContent = '★'; // Use an emoji or icon for the star
+            star.className = 'star'; // Apply styling class if needed
+            
+            if (i < ratingValue) {
+                // Highlight the star if it's within the rating value
+                star.style.color = 'gold'; // Color for filled stars
+            } else {
+                // Set a different color for empty stars (optional)
+                star.style.color = '#d3d3d3'; // Color for empty stars (light gray)
+            }
+            
+            // Append the star to the container
+            ratingStars.appendChild(star);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the rating value from the data attribute
+        const ratingStars = document.getElementById("ratingStars");
+        const ratingValue = parseInt(ratingStars.getAttribute("data-rating-value"), 10);
+        // Display the stars based on the rating value
+        displayStars(ratingValue);
+    });
+</script>
+{% endblock %}
+
+{% endblock  %}

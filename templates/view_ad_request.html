@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="col mb-4 my-4">
+    <div class="card h-100 shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title"><b>{{ ad.title }}</b></h3>
+            <p class="card-text">
+                {% if session['role'] == 'sponsor' %}
+                <b>Influencer Assigned:</b> {{ ad.influencer.name }}<br>
+                {% endif %}
+                <b>Message:</b> {{ ad.message }}<br>
+                <b>Status:</b> {{ ad.status.capitalize() }}<br>
+            </p>
+            <form id="negotiate-form" action="{{ url_for('negotiate', id=ad.id) }}" method="POST" style="display:inline;">
+                <b>Requirements:</b> <br>
+                {% if ad.status != 'pending' %}
+                <textarea name="requirements" id="requirements" cols="30" rows="5" maxlength="250" class="form-control" disabled>{{ ad.requirements }}</textarea><br>
+                {% else %}
+                <textarea name="requirements" id="requirements" cols="30" rows="5" maxlength="250" class="form-control">{{ ad.requirements }}</textarea><br>
+                {% endif %}
+                <b>Payment Amount:</b> <br>
+                {% if ad.status != 'pending' %}
+                <input type="number" id="payment_amount" name="payment_amount" value="{{ ad.payment_amount }}" placeholder="Enter amount" disabled>
+                {% else %}
+                <input type="number" id="payment_amount" name="payment_amount" value="{{ ad.payment_amount }}" placeholder="Enter amount">
+                {% endif %}
+            </form>
+            <form id="accept-form" action="{{ url_for('update_status', id=ad.id, status='accepted') }}" method="POST" style="display:inline;"></form>
+            <form id="reject-form" action="{{ url_for('update_status', id=ad.id, status='rejected') }}" method="POST" style="display:inline;"></form>
+            <form id="mark-as-completed" action="{{ url_for('mark_completed', id=ad.id) }}" method="POST"></form>
+            <form id="pay" action="{{ url_for('pay', id=ad.id) }}"></form>
+            {% if ad.is_paid %}
+            <form id="view-transaction" action="{{ url_for('view_transaction', id=ad.transaction_id) }}"></form>
+            <form id="rating" action="{{ url_for('rate', id=ad.id) }}"></form>
+            {% endif %}
+            <div class="text-center mt-3">
+                {% if ad.status == 'pending' %}
+                <button type="submit" form="negotiate-form" class="btn btn-outline-primary">Negotiate</button>
+                {% if ad.current_handler == session['role'] %}
+                <button type="submit" form="accept-form" class="btn btn-outline-success mx-1">Accept</button>
+                <button type="submit" form="reject-form" class="btn btn-outline-danger mx-1">Reject</button>
+                {% endif %}
+                {% endif %}
+                {% if ad.status == 'accepted' %}
+                {% if not ad.is_completed and session['role'] == 'influencer' %}
+                <button type="submit" form="mark-as-completed" class="btn btn-success">Mark as completed</button>
+                {% elif not ad.is_completed and session['role'] == 'sponsor' %}
+                Waiting for influencer to mark as completed...
+                {% endif %}
+                {% if ad.is_completed and session['role'] == 'sponsor' %}
+                {% if not ad.is_paid %}
+                <button type="submit" form="pay" class="btn btn-success">Pay Now</button>
+                {% else %}
+                <span class="mx-3"><button type="submit" form="pay" class="btn btn-success" disabled>Paid</button></span>
+                <button type="submit" form="view-transaction" class="btn btn-success">View Transaction</button>
+                {% if not ad.is_rated %}
+                <button type="submit" form="rating" class="btn btn-warning mx-3">Give a rating</button>
+                {% else %}
+                <button type="submit" form="rating" class="btn btn-warning mx-3" disabled>Rated already</button>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+                {% if ad.is_completed and session['role'] == 'influencer' %}
+                <button type="submit" form="mark-as-completed" class="btn btn-success mx-3" disabled>Marked as completed</button>
+                {% if not ad.is_paid %}
+                Payment is pending.
+                {% else %}
+                <button type="submit" form="view-transaction" class="btn btn-success">View Transaction</button>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

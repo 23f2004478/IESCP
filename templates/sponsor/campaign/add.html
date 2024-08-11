@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+    <h1>Add Campaigns</h1>
+    <hr>
+    <div class="flex">
+        <form action="" method="post">
+            <label class="form-label" for="name">Campaign Name:</label>
+            <input class="form-control" type="text" name="name" id="name" maxlength="64">
+
+            <label class="form-label" for="description">Campaign Description:</label>
+            <textarea name="description" id="description" cols="30" rows="5" maxlength="250" class="form-control"></textarea>
+
+            <label class="form-label" for="goals">Goals: </label>
+            <textarea name="goals" id="goals" cols="30" rows="5" maxlength="250" class="form-control"></textarea>
+
+            <label class="form-label" for="start-date">Start Date:</label>
+            <input class="form-control" type="date" name="start_date" id="start-date">
+
+            <label class="form-label" for="end-date">End Date:</label>
+            <input class="form-control" type="date" name="end_date" id="end-date">
+
+            <label class="form-label" for="budget">Budget:</label>
+            <input class="form-control" type="number" name="budget" id="budget">
+
+            <label class="form-label" for="visibility">Visibility:</label>
+            <select name="visibility" id="visibility" class="form-control">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+            
+            <button type="submit" class="btn btn-success my-3">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Create
+            </button>
+        </form>
+    </div>
+{% endblock %}

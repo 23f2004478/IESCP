@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="mt-3">My Chats</h1>
+    <div class="chats-container">
+        {% if latest_messages %}
+            <ul class="chats-list">
+                {% for contact_id, message in latest_messages.items() %}
+                    {% set contact = contacts[contact_id] %}
+                    <li class="chat-item">
+                        <a href="{{ url_for('chat', username=contact.user.username) }}" class="chat-link">
+                            <div class="chat-profile-pic">
+                                <img src="{{ url_for('static', filename='uploads/' + contact.user.profile_picture) }}" alt="Profile Picture">
+                            </div>
+                            <div class="chat-details">
+                                <div class="chat-header">
+                                    <strong>
+                                        {% if contact.type == 'sponsor' %}
+                                            {{ contact.user.sponsors[0].name }}
+                                        {% elif contact.type == 'influencer' %}
+                                            {{ contact.user.influencers[0].name }}
+                                        {% else %}
+                                            {{ contact.user.username }}
+                                        {% endif %}
+                                    </strong>
+                                    <span class="chat-timestamp">{{ message.timestamp.strftime('%H:%M %d-%m-%Y') }}</span>
+                                </div>
+                                <p class="chat-preview">
+                                    {% if message.sender_id == current_user.id %}
+                                        <span class="me">Me: </span>{{ message.content | truncate(50, True, '...') }}
+                                    {% else %}
+                                        <span class="other"><span class="status-indicator"></span>{{ message.content | truncate(50, True, '...') }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No chats available.</p>
+        {% endif %}
+    </div>
+
+<style>
+    body {
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    .chats-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .chats-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .chat-item {
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .chat-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        padding: 10px;
+        transition: background-color 0.3s;
+    }
+    
+    .chat-link:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .chat-profile-pic {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+    }
+    
+    .chat-profile-pic img {
+        width: 100%;
+        height: auto;
+    }
+    
+    .chat-details {
+        flex-grow: 1;
+    }
+    
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+    
+    .chat-header strong {
+        font-size: 16px;
+        color: #333;
+    }
+    
+    .chat-timestamp {
+        font-size: 12px;
+        color: #888;
+    }
+    
+    .chat-preview {
+        font-size: 14px;
+        color: #555;
+        margin: 0;
+    }
+    
+    .me {
+        font-weight: bold;
+    }
+    
+    .other {
+        display: flex;
+        align-items: center;
+    }
+    
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: green;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    
+</style>
+{% endblock %}

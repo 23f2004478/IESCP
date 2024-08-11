@@ -1,0 +1,67 @@
+{% extends 'base.html' %} 
+{% block content %}
+    <div class="container">
+        <h1>Rate {{ ad.influencer.name }}</h1>
+        <form action="" method="post">
+            <label for="rating" class="form-label my-3">Rating: <div id="ratingStars"></div></label>
+            <span id="ratingValue" style="display:none;">1</span>
+ 
+            <input type="range" id="rating" name="rating" class="form-control" min="1" max="5" step="1" value="1" oninput="updateRatingValue(this.value)" required>
+            <label for="review" class="form-label my-3">Review:</label>
+            <textarea name="review" id="review" cols="30" rows="5" maxlength="250" class="form-control" required></textarea>
+
+            <button type="submit" class="btn btn-success my-3">Submit</button>
+            <a href="javascript:window.history.back();" class="btn btn-danger mx-3 my-3">Cancel</a>
+        </form>
+
+        <script>
+            function updateRatingValue(value) {
+                // Update the rating value in the span
+                document.getElementById('ratingValue').innerText = value;
+                // Update the stars display based on the new value
+                displayStars(value);
+            }
+            
+            function displayStars(ratingValue) {
+                // Get the container where you want to display the stars
+                const ratingStars = document.getElementById("ratingStars");
+                
+                // Clear any existing content
+                ratingStars.innerHTML = '';
+                
+                // Loop through the rating value and create stars
+                for (let i = 0; i < ratingValue; i++) {
+                    // Create a star element (you can use an icon or emoji)
+                    const star = document.createElement('span');
+                    star.textContent = '★'; // You can use an emoji or any icon
+                    star.className = 'star'; // Apply styling class if needed
+                    star.style.color = 'gold'; // Set the color for the star
+                    
+                    // Append the star to the container
+                    ratingStars.appendChild(star);
+                }
+            }
+            
+            document.addEventListener("DOMContentLoaded", function() {
+                // Get the rating value from the span
+                const ratingValue = parseInt(document.getElementById("ratingValue").textContent);
+                // Initial display of stars
+                displayStars(ratingValue);
+            });
+        </script>
+
+        <style>
+            .form-label {
+                display: flex;
+                align-items: center;
+            }
+            #ratingStars {
+                margin-left: 10px; 
+            }
+            .star {
+                font-size: 24px; 
+                margin-right: 5px;
+            }
+        </style>
+    </div>
+{% endblock %}

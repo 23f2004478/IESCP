@@ -1,34 +1,107 @@
-{% extends 'layout.html' %} {% block content %} 
-  <form class="d-flex search my-5" role="search" action="/search" method="get">
-    <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search" 
+{% extends 'base.html' %}
+{% block content %}
+<form class="d-flex search my-5" role="search" action="/search" method="get">
+    <input class="form-control" type="search" placeholder="Search" aria-label="search" name="search"
     {% if search %}
         value="{{ search }}"
-    {% endif %}
-    >
-    <button class="btn btn-outline-success" type="submit">Search</button>
+    {% endif %}>
+    <input class="form-control" type="number" placeholder="Max Budget" aria-label="budget" name="budget"
+    {% if budget %}
+        value="{{ budget }}"
+    {% endif %}>
+    <input class="form-control" type="text" placeholder="Category" aria-label="category" name="category"
+    {% if category %}
+        value="{{ category }}"
+    {% endif %}>
+    <input class="form-control" type="text" placeholder="Niche" aria-label="niche" name="niche"
+    {% if niche %}
+        value="{{ niche }}"
+    {% endif %}>
+    <button class="btn btn-outline-primary" type="submit">Search</button>
 </form>
-{% if query %}
-    
-    <h2>Categories matching your search:</h2>
-    {% if categories %}
-         {% for category in categories %}
-            {{category.name}}
-         {% endfor %}
-    {% else %}
-    No matches
-    {% endif %}
 
-    <hr>
+{% if search or budget or category or niche %}
+    <div class="container mt-4">
+        {% set eligible_campaigns = campaigns | selectattr('is_flagged', 'equalto', false) | selectattr('visibility', 'equalto', 'public') | list %}
+        <h2>Campaigns matching your search:</h2>
+        <div class="row">
+            {% if eligible_campaigns %}
+                {% for campaign in eligible_campaigns %}
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="profile-details flex-grow-1">
+                                    <h5 class="card-title">{{ campaign.name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ campaign.description }}</h6>
+                                    <p class="card-text">Budget: &#x20B9;{{ campaign.budget }}</p>
+                                </div>
+                                <div class="profile-actions">
+                                    <a href="{{ url_for('ads', id=campaign.id) }}" class="btn btn-outline-primary btn-sm">View Campaign</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No campaigns found.</p>
+            {% endif %}
+        </div>
+        
+        {% set eligible_sponsors = sponsors | selectattr('user.username', 'ne', current_user.username) | list %}
+        <h2>Sponsors matching your search:</h2>
+        <div class="row">
+            {% if eligible_sponsors %}
+                {% for sponsor in eligible_sponsors %}
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="profile-pic mx-3">
+                                    <img src="{{ url_for('static', filename='uploads/' + sponsor.user.profile_picture) }}" class="img-fluid profile-picture-search" alt="Profile Picture" style="max-width: 100px; height: 100px;">
+                                </div>
+                                <div class="profile-details flex-grow-1">
+                                    <h5 class="card-title">{{ sponsor.name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ sponsor.industry }}</h6>
+                                </div>
+                                <div class="profile-actions">
+                                    <a href="{{ url_for('profile', username=sponsor.user.username) }}" class="btn btn-outline-primary btn-sm">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No sponsors found.</p>
+            {% endif %}
+        </div>
 
-    <h2>Products matching your search:</h2>
-    {% if products %}
-         {% for product in products %}
-            {{product.name}}
-         {% endfor %}
-    {%else%}
-    No matches
-    {% endif %}
-
+        {% set eligible_influencers = influencers | selectattr('user.username', 'ne', current_user.username) | list %}
+        <h2>Influencers matching your search:</h2>
+        <div class="row">
+            {% if eligible_influencers %}
+                {% for influencer in eligible_influencers %}
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="profile-pic mx-3">
+                                    <img src="{{ url_for('static', filename='uploads/' + influencer.user.profile_picture) }}" class="img-fluid profile-picture-search" alt="Profile Picture" style="max-width: 100px; height: 100px;">
+                                </div>
+                                <div class="profile-details flex-grow-1">
+                                    <h5 class="card-title">{{ influencer.name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ influencer.category }} - {{ influencer.niche }}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Rating: {{ influencer.rating }}</h6>
+                                </div>
+                                <div class="profile-actions">
+                                    <a href="{{ url_for('profile', username=influencer.user.username) }}" class="btn btn-outline-primary btn-sm">View Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No influencers found.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endif %}
 {% endblock %}
 
@@ -38,4 +111,43 @@
         gap: 15px;
     }
 </style>
+
+<script>
+    function loadNiches() {
+        var categorySelect = document.getElementById("category");
+        var nicheSelect = document.getElementById("niche");
+        
+        // Get the selected category value
+        var selectedCategory = categorySelect.value;
+        
+        // Clear existing options in the niche select dropdown
+        nicheSelect.innerHTML = ''; // Clear existing options
+        
+        // Add default option for niche
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Select a niche";
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        nicheSelect.add(defaultOption);
+        
+        // Define niches based on the selected category
+        var categoriesDict = JSON.parse('{{ categories_dict | tojson | safe }}');
+        
+        if (selectedCategory in categoriesDict) {
+            var nichesArray = categoriesDict[selectedCategory];
+            nichesArray.forEach(function(niche) {
+                var option = document.createElement("option");
+                option.value = niche;
+                option.text = niche;
+                nicheSelect.add(option);
+            });
+        }
+    }
+
+    // Initialize the niches dropdown on page load based on the selected category
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNiches();
+    });
+</script>
 {% endblock %}

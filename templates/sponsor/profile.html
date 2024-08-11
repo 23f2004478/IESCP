@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% block content%}
+
+<div class="container mt-4">
+
+    <div class="row">
+        <div class="col-md-3 text-center profile-section">
+            <div class="profile-pic mb-3">
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" class="img-fluid profile-picture" alt="Profile Picture">
+            </div>  
+            <h3>{{ sponsor.name }}</h3>
+            <h5>{{ sponsor.industry }}</h5>
+            {% if user.username != current_user.username %}
+                <a href="{{ url_for('chat', username=user.username) }}" class="btn btn-primary my-3">Send Message {{username}}</a>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9">
+            <div class="campaign-section">
+                <h5>Active Campaigns:</h5>
+                {% if active_campaigns %}
+                    {% for campaign in active_campaigns %}
+                    <div class="campaign-card">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ campaign.name }} | Progress {{ ((campaign.budget - campaign.remaining_budget) / campaign.budget * 100) | round(2) }}%</span>
+                            <a href="{{ url_for('ads', id=campaign.id) }}" class="btn btn-warning btn-sm mb-3">View</a>
+                        </div>
+                        <div class="progress campaign-progress">
+                            <div class="progress-bar" style="width: {{ (campaign.budget - campaign.remaining_budget)/(campaign.budget/100) }}%; "></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-light text-center p-2">No active campaigns.</div>
+                {% endif %}
+            </div>
+
+            <div class="campaign-section">
+                <h5>Past Campaigns:</h5>
+                {% if past_campaigns %}
+                    {% for campaign in past_campaigns %}
+                    <div class="campaign-card">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ campaign.name }} | Progress {{ (campaign.budget - campaign.remaining_budget)/(campaign.budget/100) }}%</span>
+                            <a href="{{ url_for('ads', id=campaign.id) }}" class="btn btn-warning btn-sm mb-3">View</a>
+                        </div>
+                        <div class="progress campaign-progress">
+                            <div class="progress-bar" style="width: {{ (campaign.budget - campaign.remaining_budget)/(campaign.budget/100) }}%; "></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-light text-center p-2">No past campaigns.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

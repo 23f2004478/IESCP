@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="col mb-4 my-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title"><b>{{ campaign.name }}</b>
+
+                </h3>
+                <p class="card-text">
+                    <b>Description:</b> {{campaign.description}} <br>
+                    <b>Goals:</b> {{campaign.goals}} <br>
+                    <b>Start Date:</b> {{campaign.start_date}} <br>
+                    <b>End Date:</b> {{campaign.end_date}} <br>
+                    <b>Initial Budget:</b> &#8377;{{campaign.budget}} <br>
+                    <b>Remaining Budget:</b> &#8377;{{campaign.remaining_budget}} <br>
+                    <b>Created by: </b> {{campaign.sponsor.name}} <br>
+                    {% if session['role'] == 'sponsor' and current_user.username == campaign.sponsor.user.username %}
+                    <b>Visibility:</b> {{campaign.visibility.capitalize()}} <br>
+                    {% endif %}
+                </p>
+                <div class="text-center mt-3">
+                    {% if session['role'] == 'influencer' or current_user.username == campaign.sponsor.user.username: %}
+                    <a href="{{url_for('ad_add', id=campaign.id)}}" class="btn btn-outline-primary ml-3">
+                        Send an Ad Request
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if session['role'] != 'influencer' and current_user.username == campaign.sponsor.user.username and campaign.ads %}
+    <div class="col mb-4 my-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width:10%">Ad ID</th>
+                            <th>Ad Title</th>
+                            <th style="width:10%">Status</th>
+                            <th style="width:15%">Influencer Assigned</th>
+                            <th style="width:12%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ad in campaign.ads %}
+                        <tr>
+                            <td>{{ad.id}}</td>
+                            <td>{{ad.title}}</td>
+                            {% if ad.is_completed %}
+                            <td><i class="fa-solid fa-circle-check" style="color:green"></i>
+                            {% else %}
+                            <td>{{ad.status}}</td>
+                            {% endif %}
+                            <td>{{ad.influencer.name if ad.influencer.name else 'N/A'}}</td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ url_for('view_ad_request', id=ad.id) }}" class="btn btn-outline-primary btn-sm mx-1">
+                                        View
+                                    </a>
+                                    <form action="{{ url_for('ad_delete', id=ad.id) }}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm mx-1">Delete</button>
+                                    </form>                                    
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>     
+    {% endif %}
+</div>
+
+{% endblock %}

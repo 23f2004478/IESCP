@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block content %}
+        <h1>Register Sponsor</h1>
+        <form action="" method="POST">
+            <label for="name" class="form-label my-3">Name:</label>
+            <input type="text" name="name" class="form-control">
+
+            <label for="industry" class="form-label my-3">Industry:</label>
+            <select name="industry" class="form-select">
+                <option value="" selected>Select a industry</option>
+                {% for industry in industries_list %}
+                    <option value="{{ industry }}">{{ industry }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="username" class="form-label my-3">Username:</label>
+            <input type="text" name="username" class="form-control">
+            
+            <label for="password" class="form-label my-3">Password:</label>
+            <input type="password" name="password" class="form-control">
+
+            <label for="confirm" class="form-label my-3">Confirm Password:</label>
+            <input type="password" name="confirm" class="form-control mb-3">
+
+            <button class="btn btn-success my-3">Register</button>
+            <a href="/login" class="btn btn-danger mx-3 my-3">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

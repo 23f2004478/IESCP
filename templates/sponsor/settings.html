@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profilecard">
+    <div class="profileinfo">
+        <h1>{{ sponsor.name }}</h1>
+        <h5>@{{ current_user.username }}</h5>
+    </div>
+</div>
+
+<form id="upload_profile_picture" method="POST" action="{{ url_for('upload_profile_picture') }}" enctype="multipart/form-data">
+    <input type="file" name="profile_picture" accept="image/*" required>  
+</form>
+<form id="delete_profile_picture" method="POST" action="{{ url_for('delete_profile_picture') }}"></form>
+
+<button form="upload_profile_picture" type="submit" class="btn btn-primary my-3">Upload Profile Picture</button>
+<button form="delete_profile_picture" type="submit" class="btn btn-danger my-3">Delete Profile Picture</button>
+
+<form action="{{ url_for('settings_post') }}" method="post">
+    <input class="form-control mt-3" type="text" name="username" id="username" placeholder="New Username">
+    <input class="form-control mt-3" type="password" name="password" id="password" placeholder="Current Password">
+    <input class="form-control mt-3" type="password" name="npassword" id="npassword" placeholder="New Password">
+    <input class="form-control mt-3" type="password" name="confirm" id="confirm" placeholder="Confirm New Password">
+    <input class="form-control mt-3" type="text" name="name" id="name" value="{{ sponsor.name }}" placeholder="Name">
+    <input class="form-control mt-3" type="text" name="industry" id="industry" value="{{ sponsor.industry }}" placeholder="Industry">
+    <button class="btn btn-primary mt-3" type="submit">Change</button>
+</form>
+
+<form action="{{ url_for('delete_user', id=current_user.id) }}" method="post">
+    <button class="btn btn-danger mt-3" type="submit">Delete my account</button>
+</form>
+
+{% endblock %}

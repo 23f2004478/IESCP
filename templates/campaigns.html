@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="table-responsive mb-4">
+        <h1 class="text-center text-white bg-success py-2 rounded">Campaigns
+            {% if session['role'] == 'sponsor': %}
+            <a href="{{url_for('campaign_add')}}" class="btn btn-primary">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+            {% elif session['role'] == 'admin': %}
+            <a href="{{url_for('export_ads_csv')}}" class="btn btn-danger">
+                <i class="fa fa-file-csv" aria-hidden="true"></i>
+                Export Ads as CSV
+            </a>
+            {% endif %}
+        </h1>
+        <table class="table table-bordered table-striped table-hover mt-2">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width:5%">ID</th>
+                    <th>Name</th>
+                    <th style="width:10%">Budget</th>
+                    <th style="width:10%">Visibility</th>
+                    <th style="width:12%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in campaigns %}
+                <tr>
+                    <td>{{campaign.id}}</td>
+                    <td>{{campaign.name}}</td>
+                    <td>{{campaign.budget}}</td>
+                    <td>{{campaign.visibility}}</td>
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <a href="{{ url_for('ads', id=campaign.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa fa-external-link" aria-hidden="true"></i>
+                            </a>
+                            <a href="{{ url_for('campaign_edit', id=campaign.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </a>
+                            <form action="{{ url_for('campaign_delete', id=campaign.id) }}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                            {% if session['role'] == 'admin': %}
+                            <form action="{{ url_for('flag_campaign', id=campaign.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    {% if not campaign.is_flagged %}
+                                    <i class="fa fa-flag" aria-hidden="true"></i>
+                                    {% else %}
+                                    <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

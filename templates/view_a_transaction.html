@@ -1,0 +1,47 @@
+{% extends 'base.html' %} 
+{% block content %}
+    <div class="container">
+        <h1>Transaction No.{{ transaction.id }}</h1>
+        <div class="border rounded p-3 mb-4">
+            <div class="print-only">
+                <h4>Transaction Details</h4>
+                <p>
+                    <b>Transaction ID: </b> {{ transaction.id }}<br>
+                    <b>Campaign: </b> {{ transaction.ad.campaign.name }}<br>
+                    <b>Ad: </b> {{ transaction.ad.title }}<br>
+                    <b>Sponsor: </b> {{ transaction.ad.sponsor.name }}<br>
+                    <b>Influencer: </b> {{ transaction.ad.influencer.name }}<br>
+                    <b>Amount: </b> &#8377;{{ transaction.amount }}<br>
+                    <b>Transaction Date: </b> {{ transaction.date_created.strftime('%d-%m-%Y') }}<br>
+                    <b>Paid by: </b> {{ transaction.card_holder_name }}<br>
+                </p>
+            </div>
+        </div>
+
+        <button class="btn btn-outline-primary print-button" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> Print Transaction
+        </button>
+    </div>
+
+<style>
+    @media print {
+        .print-button {
+            display: none;
+        }
+        .navbar {
+            display: none;
+        }
+        .container * {
+            visibility: hidden;
+        }
+        .print-only, .print-only * {
+            visibility: visible;
+        }
+        .print-only {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+</style>
+{% endblock %}
