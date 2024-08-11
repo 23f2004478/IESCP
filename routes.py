@@ -258,6 +258,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Ensure the upload directory exists
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
 @app.route('/upload_profile_picture', methods=['POST'])
 @login_required
 def upload_profile_picture():
@@ -282,7 +286,13 @@ def upload_profile_picture():
 
         # Save the new profile picture
         filename = current_user.username + '_' + datetime.now().strftime('%Y%m%d%H%M%S') + '_' + file.filename
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # Ensure the directory exists before saving
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
+        
+        file.save(file_path)
         current_user.profile_picture = filename
         db.session.commit()
         flash('Profile picture uploaded successfully', 'success')
